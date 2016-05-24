@@ -24,6 +24,7 @@ namespace Monolog;
 
 use DateTimeZone;
 use Monolog\Handler\HandlerInterface;
+use Monolog\Collection\HandlerStack;
 use Psr\Log\LoggerInterface;
 use Psr\Log\InvalidArgumentException;
 
@@ -123,7 +124,7 @@ class Logger implements LoggerInterface
     /**
      * The handler stack
      *
-     * @var HandlerInterface[]
+     * @var HandlerStack
      */
     protected $handlers;
 
@@ -155,7 +156,7 @@ class Logger implements LoggerInterface
     public function __construct(string $name, array $handlers = array(), array $processors = array(), DateTimeZone $timezone = null)
     {
         $this->name = $name;
-        $this->handlers = $handlers;
+        $this->handlers = new HandlerStack($handlers);
         $this->processors = $processors;
         $this->timezone = new DateTimeZone($timezone ?: date_default_timezone_get() ?: 'UTC');
     }
@@ -189,7 +190,7 @@ class Logger implements LoggerInterface
      */
     public function pushHandler(HandlerInterface $handler): self
     {
-        array_unshift($this->handlers, $handler);
+        $this->handlers->push($handler);
 
         return $this;
     }
@@ -201,11 +202,7 @@ class Logger implements LoggerInterface
      */
     public function popHandler(): HandlerInterface
     {
-        if (!$this->handlers) {
-            throw new \LogicException('You tried to pop from an empty handler stack.');
-        }
-
-        return array_shift($this->handlers);
+        return $this->handlers->pop();
     }
 
     /**
@@ -218,10 +215,7 @@ class Logger implements LoggerInterface
      */
     public function setHandlers(array $handlers): self
     {
-        $this->handlers = array();
-        foreach (array_reverse($handlers) as $handler) {
-            $this->pushHandler($handler);
-        }
+        $this->handlers->set($handlers);
 
         return $this;
     }
@@ -231,7 +225,7 @@ class Logger implements LoggerInterface
      */
     public function getHandlers(): array
     {
-        return $this->handlers;
+        return $this->handlers->get();
     }
 
     /**
@@ -300,18 +294,7 @@ class Logger implements LoggerInterface
         $levelName = static::getLevelName($level);
 
         // check if any handler will handle this message so we can return early and save cycles
-        $handlerKey = null;
-        reset($this->handlers);
-        while ($handler = current($this->handlers)) {
-            if ($handler->isHandling(array('level' => $level))) {
-                $handlerKey = key($this->handlers);
-                break;
-            }
-
-            next($this->handlers);
-        }
-
-        if (null === $handlerKey) {
+        if (null === $this->handlers->findHandlingKey($level)) {
             return false;
         }
 
@@ -336,13 +319,7 @@ class Logger implements LoggerInterface
             $record = call_user_func($processor, $record);
         }
 
-        while ($handler = current($this->handlers)) {
-            if (true === $handler->handle($record)) {
-                break;
-            }
-
-            next($this->handlers);
-        }
+        $this->handlers->handle($record, false);
 
         return true;
     }
@@ -399,17 +376,7 @@ class Logger implements LoggerInterface
      */
     public function isHandling(int $level): bool
     {
-        $record = array(
-            'level' => $level,
-        );
-
-        foreach ($this->handlers as $handler) {
-            if ($handler->isHandling($record)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->handlers->isHandling($level);
     }
 
     /**
