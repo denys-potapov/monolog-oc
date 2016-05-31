@@ -11,6 +11,8 @@
 
 namespace Monolog\Handler;
 
+use Monolog\Collection\WhatFailureHandlerStack;
+
 /**
  * Forwards records to multiple handlers suppressing failures of each handler
  * and continuing through to give every handler a chance to succeed.
@@ -20,38 +22,12 @@ namespace Monolog\Handler;
 class WhatFailureGroupHandler extends GroupHandler
 {
     /**
-     * {@inheritdoc}
+     * @param array   $handlers Array of Handlers.
+     * @param Boolean $bubble   Whether the messages that are handled can bubble up the stack or not
      */
-    public function handle(array $record): bool
+    public function __construct(array $handlers, $bubble = true)
     {
-        if ($this->processors) {
-            foreach ($this->processors as $processor) {
-                $record = call_user_func($processor, $record);
-            }
-        }
-
-        foreach ($this->handlers as $handler) {
-            try {
-                $handler->handle($record);
-            } catch (\Throwable $e) {
-                // What failure?
-            }
-        }
-
-        return false === $this->bubble;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handleBatch(array $records)
-    {
-        foreach ($this->handlers as $handler) {
-            try {
-                $handler->handleBatch($records);
-            } catch (\Throwable $e) {
-                // What failure?
-            }
-        }
+        $this->handlers = new WhatFailureHandlerStack($handlers);
+        $this->bubble = $bubble;
     }
 }

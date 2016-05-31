@@ -294,7 +294,7 @@ class Logger implements LoggerInterface
         $levelName = static::getLevelName($level);
 
         // check if any handler will handle this message so we can return early and save cycles
-        if (null === $this->handlers->findHandlingKey($level)) {
+        if (null === $this->handlers->findHandlingKey(array('level' => $level))) {
             return false;
         }
 
@@ -376,7 +376,7 @@ class Logger implements LoggerInterface
      */
     public function isHandling(int $level): bool
     {
-        return $this->handlers->isHandling($level);
+        return $this->handlers->isHandling(array('level' => $level));
     }
 
     /**
