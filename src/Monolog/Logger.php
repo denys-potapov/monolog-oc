@@ -25,6 +25,7 @@ namespace Monolog;
 use DateTimeZone;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Collection\HandlerStack;
+use Monolog\Collection\ProcessorStack;
 use Psr\Log\LoggerInterface;
 use Psr\Log\InvalidArgumentException;
 
@@ -129,11 +130,11 @@ class Logger implements LoggerInterface
     protected $handlers;
 
     /**
-     * Processors that will process all log records
+     * The procesors stack stack
      *
      * To process records of a single handler instead, add the processor on that specific handler
-     *
-     * @var callable[]
+     * 
+     * @var ProcessorStack
      */
     protected $processors;
 
@@ -157,7 +158,7 @@ class Logger implements LoggerInterface
     {
         $this->name = $name;
         $this->handlers = new HandlerStack($handlers);
-        $this->processors = $processors;
+        $this->processors = new ProcessorStack($processors);
         $this->timezone = new DateTimeZone($timezone ?: date_default_timezone_get() ?: 'UTC');
     }
 
@@ -236,7 +237,7 @@ class Logger implements LoggerInterface
      */
     public function pushProcessor(callable $callback): self
     {
-        array_unshift($this->processors, $callback);
+        $this->processors->push($callback);
 
         return $this;
     }
@@ -248,11 +249,7 @@ class Logger implements LoggerInterface
      */
     public function popProcessor(): callable
     {
-        if (!$this->processors) {
-            throw new \LogicException('You tried to pop from an empty processor stack.');
-        }
-
-        return array_shift($this->processors);
+        return $this->processors->pop();
     }
 
     /**
@@ -260,7 +257,7 @@ class Logger implements LoggerInterface
      */
     public function getProcessors(): array
     {
-        return $this->processors;
+        return $this->processors->get();
     }
 
     /**
@@ -315,10 +312,7 @@ class Logger implements LoggerInterface
             'extra' => array(),
         );
 
-        foreach ($this->processors as $processor) {
-            $record = call_user_func($processor, $record);
-        }
-
+        $record = $this->processors->process($record);
         $this->handlers->handle($record, false);
 
         return true;
