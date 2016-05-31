@@ -28,3 +28,13 @@ Anthology](http://pragprog.com/book/twa/thoughtworks-anthology):
 	No Classes With More Than Two Instance Variables 
 9. [Rule #9](https://github.com/denys-potapov/monolog-oc/issues/9)
 	No Getters/Setters/Properties 
+
+Extract HandlerStack class
+-----
+
+Any class that contains a collection should contain no other member
+variables. We apply this rule to extract HandlerStack from Logger.php. 
+
+We would also extract all the actions related to handlers stack: isEmpty, isHandling.
+
+

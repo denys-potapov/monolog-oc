@@ -1,0 +1,5 @@
+/src/Monolog/Handler/WhatFailureGroupHandler
+/src/Monolog/Handler/GroupHandler.php
+/src/Monolog/Collection/HandlerStack.php
+/src/Monolog/Collection/WhatFailureHandlerStack.php
+/src/Monolog/Logger.php
