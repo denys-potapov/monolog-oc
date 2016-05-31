@@ -43,6 +43,10 @@ class ProcessorStack
      */
     public function push(callable $callback): self
     {
+        if (!is_callable($callback)) {
+            throw new \InvalidArgumentException('Processors must be valid callables (callback or object with an __invoke method), '.var_export($callback, true).' given');
+        }
+
         array_unshift($this->processors, $callback);
 
         return $this;

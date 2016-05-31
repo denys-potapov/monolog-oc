@@ -11,6 +11,8 @@
 
 namespace Monolog\Handler;
 
+use Monolog\Collection\ProcessorStack;
+
 /**
  * Helper trait for implementing ProcessableInterface
  *
@@ -18,20 +20,18 @@ namespace Monolog\Handler;
  */
 trait ProcessableHandlerTrait
 {
-    /**
-     * @var callable[]
+    /*
+     * 
+     * @var ProcessorStack
      */
-    protected $processors = [];
+    protected $processors;
 
     /**
      * {@inheritdoc}
      */
     public function pushProcessor(callable $callback): HandlerInterface
     {
-        if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('Processors must be valid callables (callback or object with an __invoke method), '.var_export($callback, true).' given');
-        }
-        array_unshift($this->processors, $callback);
+        $this->getProcessors()->push($callback);
 
         return $this;
     }
@@ -41,11 +41,7 @@ trait ProcessableHandlerTrait
      */
     public function popProcessor(): callable
     {
-        if (!$this->processors) {
-            throw new \LogicException('You tried to pop from an empty processor stack.');
-        }
-
-        return array_shift($this->processors);
+        return $this->getProcessors()->pop();
     }
 
     /**
@@ -56,10 +52,12 @@ trait ProcessableHandlerTrait
      */
     protected function processRecord(array $record)
     {
-        foreach ($this->processors as $processor) {
-            $record = $processor($record);
-        }
+        return $this->getProcessors()->process($record);
+    }
 
-        return $record;
+    protected function getProcessors(): ProcessorStack
+    {
+        return $this->processors
+            ?: $this->processors = new ProcessorStack();
     }
 }
