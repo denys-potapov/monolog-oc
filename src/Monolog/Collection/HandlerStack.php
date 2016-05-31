@@ -5,7 +5,8 @@ declare(strict_types=1);
 /*
  * This file is part of the Monolog package.
  *
- *
+ * (c) Jordi Boggiano <j.boggiano@seld.be>
+ * 
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
@@ -96,12 +97,12 @@ class HandlerStack
      * @param  int    $level [description]
      * @return int 
      */
-    public function findHandlingKey(int $level)
+    public function findHandlingKey(array $record)
     {
         $key = null;
         reset($this->handlers);
         while ($handler = current($this->handlers)) {
-            if ($handler->isHandling(array('level' => $level))) {
+            if ($handler->isHandling($record)) {
                 $key = key($this->handlers);
                 break;
             }
@@ -118,7 +119,7 @@ class HandlerStack
      * @param array $record   log record
      * @param mixed $startKey starrt from  paticular handler
      */
-    public function handle($record, $reset = true)
+    public function handle(array $record, $reset = true)
     {
         if ($reset) {
             reset($this->handlers);
@@ -136,11 +137,34 @@ class HandlerStack
     /**
      * Checks whether the Logger has a handler that listens on the given level
      *
-     * @param  int     $level
+     * @param  array     $level
      * @return Boolean
      */
-    public function isHandling(int $level): bool
+    public function isHandling(array $record): bool
     {
-        return ($this->findHandlingKey($level) !== null);
+        return ($this->findHandlingKey($record) !== null);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handleBatch(array $records)
+    {
+        foreach ($this->handlers as $handler) {
+            $handler->handleBatch($records);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFormatter(FormatterInterface $formatter)
+    {
+        foreach ($this->handlers as $handler) {
+            $handler->setFormatter($formatter);
+        }
+
+        return $this;
     }
 }

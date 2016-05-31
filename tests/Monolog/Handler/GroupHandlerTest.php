@@ -18,7 +18,7 @@ class GroupHandlerTest extends TestCase
 {
     /**
      * @covers Monolog\Handler\GroupHandler::__construct
-     * @expectedException InvalidArgumentException
+     * @expectedException TypeError
      */
     public function testConstructorOnlyTakesHandler()
     {

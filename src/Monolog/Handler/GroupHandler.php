@@ -12,6 +12,7 @@
 namespace Monolog\Handler;
 
 use Monolog\Formatter\FormatterInterface;
+use Monolog\Collection\HandlerStack;
 
 /**
  * Forwards records to multiple handlers
@@ -30,13 +31,7 @@ class GroupHandler extends Handler implements ProcessableHandlerInterface
      */
     public function __construct(array $handlers, $bubble = true)
     {
-        foreach ($handlers as $handler) {
-            if (!$handler instanceof HandlerInterface) {
-                throw new \InvalidArgumentException('The first argument of the GroupHandler must be an array of HandlerInterface instances.');
-            }
-        }
-
-        $this->handlers = $handlers;
+        $this->handlers = new HandlerStack($handlers);
         $this->bubble = $bubble;
     }
 
@@ -45,13 +40,7 @@ class GroupHandler extends Handler implements ProcessableHandlerInterface
      */
     public function isHandling(array $record): bool
     {
-        foreach ($this->handlers as $handler) {
-            if ($handler->isHandling($record)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->handlers->isHandling($record);
     }
 
     /**
@@ -63,9 +52,7 @@ class GroupHandler extends Handler implements ProcessableHandlerInterface
             $record = $this->processRecord($record);
         }
 
-        foreach ($this->handlers as $handler) {
-            $handler->handle($record);
-        }
+        $this->handlers->handle($record);
 
         return false === $this->bubble;
     }
@@ -75,9 +62,7 @@ class GroupHandler extends Handler implements ProcessableHandlerInterface
      */
     public function handleBatch(array $records)
     {
-        foreach ($this->handlers as $handler) {
-            $handler->handleBatch($records);
-        }
+        $this->handlers->handleBatch($records);
     }
 
     /**
@@ -85,9 +70,7 @@ class GroupHandler extends Handler implements ProcessableHandlerInterface
      */
     public function setFormatter(FormatterInterface $formatter)
     {
-        foreach ($this->handlers as $handler) {
-            $handler->setFormatter($formatter);
-        }
+        $this->handlers->setFormatter($formatter);
 
         return $this;
     }
