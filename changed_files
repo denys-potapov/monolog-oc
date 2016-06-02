@@ -1,5 +1,11 @@
-/src/Monolog/Handler/WhatFailureGroupHandler
-/src/Monolog/Handler/GroupHandler.php
-/src/Monolog/Collection/HandlerStack.php
-/src/Monolog/Collection/WhatFailureHandlerStack.php
 /src/Monolog/Logger.php
+
+/src/Monolog/Collection/HandlerStack.php
+/src/Monolog/Handler/GroupHandler.php
+/src/Monolog/Collection/WhatFailureHandlerStack.php
+/src/Monolog/Handler/WhatFailureGroupHandler.php
+
+/src/Monolog/Collection/ProcessorStack.php
+/src/Monolog/Handler/ProcessableHandlerTrait.php
+
+

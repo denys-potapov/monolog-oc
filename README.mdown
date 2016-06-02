@@ -29,12 +29,18 @@ Anthology](http://pragprog.com/book/twa/thoughtworks-anthology):
 9. [Rule #9](https://github.com/denys-potapov/monolog-oc/issues/9)
 	No Getters/Setters/Properties 
 
-Extract HandlerStack class
+Extract Collection\HandlerStack class
 -----
 
-Any class that contains a collection should contain no other member
-variables. We apply this rule to extract HandlerStack from Logger.php. 
+#4 - Any class that contains a collection should contain no other member
+variables. We apply this rule to extract **Collection\HandlerStack** from **Logger**. 
 
-We would also extract all the actions related to handlers stack: isEmpty, isHandling.
+We would also extract all the actions related to handlers stack: isHandling.
 
+Reuse the **HandlerStack** in **GroupHandler** and **WhatFailureGroupHandler**
+
+Extract Collection\ProcessorStack class
+-----
+
+Following rule #4 extract **Collection\ProcessorStack** from **Logger**. Reuse it in **ProcessableHandlerTrait**.
 
