@@ -100,24 +100,6 @@ class Logger implements LoggerInterface
     const API = 2;
 
     /**
-     * Logging levels from syslog protocol defined in RFC 5424
-     *
-     * This is a static variable and not a constant to serve as an extension point for custom levels
-     *
-     * @var string[] $levels Logging levels with the levels as key
-     */
-    protected static $levels = [
-        self::DEBUG     => 'DEBUG',
-        self::INFO      => 'INFO',
-        self::NOTICE    => 'NOTICE',
-        self::WARNING   => 'WARNING',
-        self::ERROR     => 'ERROR',
-        self::CRITICAL  => 'CRITICAL',
-        self::ALERT     => 'ALERT',
-        self::EMERGENCY => 'EMERGENCY',
-    ];
-
-    /**
      * @var string
      */
     protected $name;
@@ -306,7 +288,7 @@ class Logger implements LoggerInterface
             'message' => $message,
             'context' => $context,
             'level' => $level,
-            'level_name' => $levelName,
+            'level_name' => (string) $level,
             'channel' => $this->name,
             'datetime' => $ts,
             'extra' => array(),
@@ -325,7 +307,7 @@ class Logger implements LoggerInterface
      */
     public static function getLevels(): array
     {
-        return array_flip(static::$levels);
+        return LogLevel::getLevels();
     }
 
     /**
@@ -336,30 +318,24 @@ class Logger implements LoggerInterface
      */
     public static function getLevelName(int $level): string
     {
-        if (!isset(static::$levels[$level])) {
-            throw new InvalidArgumentException('Level "'.$level.'" is not defined, use one of: '.implode(', ', array_keys(static::$levels)));
+        $name = (string) (new LogLevel($level));
+
+        if ($name == 'undefined') {
+            throw new InvalidArgumentException('Level "'.$level.'" is not defined');
         }
 
-        return static::$levels[$level];
+        return $name;
     }
 
     /**
      * Converts PSR-3 levels to Monolog ones if necessary
      *
      * @param string|int Level number (monolog) or name (PSR-3)
-     * @return int
+     * @return LogLevel
      */
-    public static function toMonologLevel($level): int
+    public static function toMonologLevel($level): LogLevel
     {
-        if (is_string($level)) {
-            if (defined(__CLASS__.'::'.strtoupper($level))) {
-                return constant(__CLASS__.'::'.strtoupper($level));
-            }
-
-            throw new InvalidArgumentException('Level "'.$level.'" is not defined, use one of: '.implode(', ', array_keys(static::$levels)));
-        }
-
-        return $level;
+        return new LogLevel($level);
     }
 
     /**

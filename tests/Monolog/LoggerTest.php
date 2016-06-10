@@ -51,14 +51,14 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
      */
     public function testConvertPSR3ToMonologLevel()
     {
-        $this->assertEquals(Logger::toMonologLevel('debug'), 100);
-        $this->assertEquals(Logger::toMonologLevel('info'), 200);
-        $this->assertEquals(Logger::toMonologLevel('notice'), 250);
-        $this->assertEquals(Logger::toMonologLevel('warning'), 300);
-        $this->assertEquals(Logger::toMonologLevel('error'), 400);
-        $this->assertEquals(Logger::toMonologLevel('critical'), 500);
-        $this->assertEquals(Logger::toMonologLevel('alert'), 550);
-        $this->assertEquals(Logger::toMonologLevel('emergency'), 600);
+        $this->assertEquals(Logger::toMonologLevel('debug')->getLevel(), 100);
+        $this->assertEquals(Logger::toMonologLevel('info')->getLevel(), 200);
+        $this->assertEquals(Logger::toMonologLevel('notice')->getLevel(), 250);
+        $this->assertEquals(Logger::toMonologLevel('warning')->getLevel(), 300);
+        $this->assertEquals(Logger::toMonologLevel('error')->getLevel(), 400);
+        $this->assertEquals(Logger::toMonologLevel('critical')->getLevel(), 500);
+        $this->assertEquals(Logger::toMonologLevel('alert')->getLevel(), 550);
+        $this->assertEquals(Logger::toMonologLevel('emergency')->getLevel(), 600);
     }
 
     /**
