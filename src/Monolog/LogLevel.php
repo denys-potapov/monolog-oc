@@ -118,4 +118,20 @@ class LogLevel implements LogLevelInterface
     {
         return static::$levels;
     }
+
+    /**
+     * Backward compatibility
+     * @deprecated
+     * @param  [type] $level [description]
+     * @return [type]        [description]
+     */
+    public static function fromLevel($level): LogLevel
+    {
+        if ($level instanceof LogLevel) {
+
+            return $level;
+        }
+
+        return new LogLevel($level);
+    }
 }

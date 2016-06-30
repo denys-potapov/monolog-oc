@@ -12,7 +12,7 @@
 namespace Monolog;
 
 use Psr\Log\LoggerInterface;
-use Psr\Log\PsrLevel as PsrLevel;
+use Psr\Log\LogLevel as PsrLevel;
 
 /**
  * Monolog error handler

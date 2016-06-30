@@ -133,7 +133,7 @@ class TestHandler extends AbstractProcessingHandler
      */
     protected function write(array $record)
     {
-        $this->recordsByLevel[$record['level']][] = $record;
+        $this->recordsByLevel[$record['level']->getLevel()][] = $record;
         $this->records[] = $record;
     }
 

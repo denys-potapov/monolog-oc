@@ -263,15 +263,13 @@ class Logger implements LoggerInterface
     /**
      * Adds a log record.
      *
-     * @param  int     $level   The logging level
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param  LogLevel $level   The logging level
+     * @param  string   $message The log message
+     * @param  array    $context The log context
      * @return Boolean Whether the record has been processed
      */
-    public function addRecord(int $level, string $message, array $context = array()): bool
+    public function addRecord($level, string $message, array $context = array()): bool
     {
-        $levelName = static::getLevelName($level);
-
         // check if any handler will handle this message so we can return early and save cycles
         if (null === $this->handlers->findHandlingKey(array('level' => $level))) {
             return false;
@@ -284,6 +282,7 @@ class Logger implements LoggerInterface
         }
         $ts->setTimezone($this->timezone);
 
+        $level = LogLevel::fromLevel($level);
         $record = array(
             'message' => $message,
             'context' => $context,

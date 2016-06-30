@@ -38,7 +38,7 @@ abstract class AbstractHandler extends Handler
      */
     public function isHandling(array $record): bool
     {
-        return $record['level'] >= $this->level;
+        return $this->level->includes($record['level']);
     }
 
     /**

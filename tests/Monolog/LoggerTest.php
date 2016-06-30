@@ -451,7 +451,7 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
         $logger->pushHandler($handler);
         $logger->{$method}('test');
         list($record) = $handler->getRecords();
-        $this->assertEquals($expectedLevel, $record['level']);
+        $this->assertEquals($expectedLevel, $record['level']->getLevel());
     }
 
     public function logMethodProvider()
