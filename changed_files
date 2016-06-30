@@ -8,4 +8,10 @@
 /src/Monolog/Collection/ProcessorStack.php
 /src/Monolog/Handler/ProcessableHandlerTrait.php
 
+/src/Monolog/LogLevel.php
+/src/Monolog/LogLevelInterface.php
+
+/src/Monolog/ErrorHandler.php
+/src/Monolog/Handler/AbstractHandler.php
+
 

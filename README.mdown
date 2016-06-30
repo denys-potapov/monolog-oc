@@ -32,8 +32,8 @@ Anthology](http://pragprog.com/book/twa/thoughtworks-anthology):
 Extract Collection\HandlerStack class
 -----
 
-#4 - Any class that contains a collection should contain no other member
-variables. We apply this rule to extract **Collection\HandlerStack** from **Logger**. 
+Any class that contains a collection should contain no other member
+variables (#4). We apply this rule to extract **Collection\HandlerStack** from **Logger**. 
 
 We would also extract all the actions related to handlers stack: isHandling.
 
@@ -43,4 +43,10 @@ Extract Collection\ProcessorStack class
 -----
 
 Following rule #4 extract **Collection\ProcessorStack** from **Logger**. Reuse it in **ProcessableHandlerTrait**.
+
+
+Wrap LogLevel
+-----
+
+And move all the related stuff to Level
 
