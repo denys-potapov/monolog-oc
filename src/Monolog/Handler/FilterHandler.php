@@ -12,6 +12,7 @@
 namespace Monolog\Handler;
 
 use Monolog\Logger;
+use Monolog\LogLevels;
 
 /**
  * Simple handler wrapper that filters records based on a list of levels
@@ -37,7 +38,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface
      *
      * @var int[]
      */
-    protected $acceptedLevels;
+    protected $levels;
 
     /**
      * Whether the messages that are handled can bubble up the stack or not
@@ -68,7 +69,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface
      */
     public function getAcceptedLevels(): array
     {
-        return array_flip($this->acceptedLevels);
+        return $this->levels->getLevels();
     }
 
     /**
@@ -77,16 +78,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface
      */
     public function setAcceptedLevels($minLevelOrList = Logger::DEBUG, $maxLevel = Logger::EMERGENCY)
     {
-        if (is_array($minLevelOrList)) {
-            $acceptedLevels = array_map('Monolog\Logger::toMonologLevel', $minLevelOrList);
-        } else {
-            $minLevelOrList = Logger::toMonologLevel($minLevelOrList);
-            $maxLevel = Logger::toMonologLevel($maxLevel);
-            $acceptedLevels = array_values(array_filter(Logger::getLevels(), function ($level) use ($minLevelOrList, $maxLevel) {
-                return $level >= $minLevelOrList && $level <= $maxLevel;
-            }));
-        }
-        $this->acceptedLevels = array_flip($acceptedLevels);
+        $this->levels = new LogLevels($minLevelOrList, $maxLevel);
     }
 
     /**
@@ -94,7 +86,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface
      */
     public function isHandling(array $record): bool
     {
-        return isset($this->acceptedLevels[$record['level']]);
+        return $this->levels->includes($record['level']);
     }
 
     /**
