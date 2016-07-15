@@ -167,13 +167,13 @@ class HipChatHandler extends SocketHandler
     protected function getAlertColor($level)
     {
         switch (true) {
-            case $level >= Logger::ERROR:
+            case $level->getLevel() >= Logger::ERROR:
                 return 'red';
-            case $level >= Logger::WARNING:
+            case $level->getLevel() >= Logger::WARNING:
                 return 'yellow';
-            case $level >= Logger::INFO:
+            case $level->getLevel() >= Logger::INFO:
                 return 'green';
-            case $level == Logger::DEBUG:
+            case $level->getLevel() == Logger::DEBUG:
                 return 'gray';
             default:
                 return 'yellow';
@@ -231,14 +231,14 @@ class HipChatHandler extends SocketHandler
         $batchRecords = array();
         $messages = array();
         $formattedMessages = array();
-        $level = 0;
+        $level = Logger::toMonologLevel(0);
         $levelName = null;
         $datetime = null;
 
         foreach ($records as $record) {
             $record = $this->processRecord($record);
 
-            if ($record['level'] > $level) {
+            if ($record['level']->getLevel() > $level->getLevel()) {
                 $level = $record['level'];
                 $levelName = $record['level_name'];
             }

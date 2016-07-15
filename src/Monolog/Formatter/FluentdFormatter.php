@@ -66,7 +66,7 @@ class FluentdFormatter implements FormatterInterface
         );
 
         if (!$this->levelTag) {
-            $message['level'] = $record['level'];
+            $message['level'] = $record['level']->getLevel();
             $message['level_name'] = $record['level_name'];
         }
 

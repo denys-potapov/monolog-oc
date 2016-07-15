@@ -70,6 +70,8 @@ class JsonFormatter extends NormalizerFormatter
      */
     public function format(array $record)
     {
+        // BC hack
+        $record['level'] = $record['level']->getLevel();
         return $this->toJson($this->normalize($record), true) . ($this->appendNewline ? "\n" : '');
     }
 

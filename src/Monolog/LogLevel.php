@@ -65,13 +65,14 @@ class LogLevel implements LogLevelInterface
             return;
         }
 
-        if (isset(self::$levels[$level])) {
-            $this->level = self::$levels[$level];
+        // str to lower for bc dompatibility
+        if (isset(self::$levels[strtolower($level)])) {
+            $this->level = self::$levels[strtolower($level)];
 
             return;
         }
 
-        throw new InvalidArgumentException('Level "'.$level.'" is not defined, use one of: '.implode(', ', array_keys(static::$levels)));
+        throw new \Psr\Log\InvalidArgumentException('Level "'.$level.'" is not defined, use one of: '.implode(', ', array_keys(static::$levels)));
     }
 
 

@@ -12,6 +12,7 @@
 namespace Monolog\Test;
 
 use Monolog\Logger;
+use Monolog\LogLevel;
 
 /**
  * Lets you easily generate log records and a dummy formatter for testing purposes
@@ -25,11 +26,12 @@ class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getRecord($level = Logger::WARNING, $message = 'test', $context = array())
     {
+        $level = LogLevel::fromLevel($level);
         return array(
             'message' => $message,
             'context' => $context,
             'level' => $level,
-            'level_name' => Logger::getLevelName($level),
+            'level_name' => (string) $level,
             'channel' => 'test',
             'datetime' => \DateTime::createFromFormat('U.u', sprintf('%.6F', microtime(true))),
             'extra' => array(),

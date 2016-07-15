@@ -52,7 +52,7 @@ class BufferHandler extends AbstractHandler implements ProcessableHandlerInterfa
      */
     public function handle(array $record): bool
     {
-        if ($record['level'] < $this->level) {
+        if (!$this->level->includes($record['level'])) {
             return false;
         }
 

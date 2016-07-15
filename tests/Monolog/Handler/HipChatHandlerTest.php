@@ -171,29 +171,29 @@ class HipChatHandlerTest extends TestCase
         return array(
             array(
                 array(
-                    array('level' => Logger::WARNING, 'message' => 'Oh bugger!', 'level_name' => 'warning', 'datetime' => new \DateTime()),
-                    array('level' => Logger::NOTICE, 'message' => 'Something noticeable happened.', 'level_name' => 'notice', 'datetime' => new \DateTime()),
-                    array('level' => Logger::CRITICAL, 'message' => 'Everything is broken!', 'level_name' => 'critical', 'datetime' => new \DateTime()),
+                    $this->getRecord(Logger::WARNING, 'Oh bugger!'),
+                    $this->getRecord(Logger::NOTICE, 'Something noticeable happened.'),
+                    $this->getRecord(Logger::CRITICAL, 'Everything is broken!')
                 ),
                 'red',
             ),
             array(
                 array(
-                    array('level' => Logger::WARNING, 'message' => 'Oh bugger!', 'level_name' => 'warning', 'datetime' => new \DateTime()),
-                    array('level' => Logger::NOTICE, 'message' => 'Something noticeable happened.', 'level_name' => 'notice', 'datetime' => new \DateTime()),
+                    $this->getRecord(Logger::WARNING, 'Oh bugger!'),
+                    $this->getRecord(Logger::NOTICE, 'Something noticeable happened.'),
                 ),
                 'yellow',
             ),
             array(
                 array(
-                    array('level' => Logger::DEBUG, 'message' => 'Just debugging.', 'level_name' => 'debug', 'datetime' => new \DateTime()),
-                    array('level' => Logger::NOTICE, 'message' => 'Something noticeable happened.', 'level_name' => 'notice', 'datetime' => new \DateTime()),
+                    $this->getRecord(Logger::DEBUG, 'Just debugging.'),
+                    $this->getRecord(Logger::NOTICE, 'Something noticeable happened.'),
                 ),
                 'green',
             ),
             array(
                 array(
-                    array('level' => Logger::DEBUG, 'message' => 'Just debugging.', 'level_name' => 'debug', 'datetime' => new \DateTime()),
+                    $this->getRecord(Logger::DEBUG, 'Just debugging.'),
                 ),
                 'gray',
             ),

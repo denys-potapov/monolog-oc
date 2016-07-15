@@ -13,6 +13,7 @@ namespace Monolog\Formatter;
 
 use Monolog\Logger;
 use Gelf\Message;
+use Monolog\LogLevel;
 
 /**
  * Serializes a log message to GELF
@@ -79,7 +80,7 @@ class GelfMessageFormatter extends NormalizerFormatter
             ->setTimestamp($record['datetime'])
             ->setShortMessage((string) $record['message'])
             ->setHost($this->systemName)
-            ->setLevel($this->logLevels[$record['level']]);
+            ->setLevel($this->logLevels[LogLevel::fromLevel($record['level'])->getLevel()]);
 
         // start count with message length + system name length + 200 for padding / metadata
         $len = 200 + strlen((string) $record['message']) + strlen($this->systemName);

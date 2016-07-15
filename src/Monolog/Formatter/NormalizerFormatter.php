@@ -12,6 +12,7 @@
 namespace Monolog\Formatter;
 
 use Throwable;
+use Monolog\LogLevel;
 
 /**
  * Normalizes incoming records to remove objects/resources so it's easier to dump to various targets
@@ -89,6 +90,10 @@ class NormalizerFormatter implements FormatterInterface
             return $data->format($this->dateFormat);
         }
 
+        if ($data instanceof LogLevel) {
+            return (string) $data;
+        }
+
         if (is_object($data)) {
             if ($data instanceof Throwable) {
                 return $this->normalizeException($data);
@@ -97,6 +102,7 @@ class NormalizerFormatter implements FormatterInterface
             // non-serializable objects that implement __toString stringified
             if (method_exists($data, '__toString') && !$data instanceof \JsonSerializable) {
                 $value = $data->__toString();
+
             } else {
                 // the rest is json-serialized in some way
                 $value = $this->toJson($data, true);

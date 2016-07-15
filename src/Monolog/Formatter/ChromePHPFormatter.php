@@ -12,6 +12,7 @@
 namespace Monolog\Formatter;
 
 use Monolog\Logger;
+use Monolog\LogLevel;
 
 /**
  * Formats a log message according to the ChromePHP array format
@@ -61,7 +62,7 @@ class ChromePHPFormatter implements FormatterInterface
             $record['channel'],
             $message,
             $backtrace,
-            $this->logLevels[$record['level']],
+            $this->logLevels[LogLevel::fromLevel($record['level'])->getLevel()],
         );
     }
 

@@ -147,7 +147,7 @@ class SlackHandler extends SocketHandler
         if ($this->useAttachment) {
             $attachment = array(
                 'fallback' => $record['message'],
-                'color'    => $this->getAttachmentColor($record['level']),
+                'color'    => $this->getAttachmentColor($record['level']->getLevel()),
                 'fields'   => array(),
             );
 

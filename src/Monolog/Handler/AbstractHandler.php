@@ -59,7 +59,7 @@ abstract class AbstractHandler extends Handler
      *
      * @return int
      */
-    public function getLevel(): int
+    public function getLevel()
     {
         return $this->level;
     }

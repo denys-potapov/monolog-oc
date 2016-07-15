@@ -30,7 +30,7 @@ class NullHandler extends Handler
      */
     public function __construct(int $level = Logger::DEBUG)
     {
-        $this->level = $level;
+        $this->level = Logger::toMonologLevel($level);
     }
 
     /**
@@ -38,7 +38,7 @@ class NullHandler extends Handler
      */
     public function isHandling(array $record): bool
     {
-        return $record['level'] >= $this->level;
+        return $this->level->includes($record['level']);
     }
 
     /**
@@ -46,7 +46,7 @@ class NullHandler extends Handler
      */
     public function handle(array $record): bool
     {
-        if ($record['level'] < $this->level) {
+        if (!$this->level->includes($record['level'])) {
             return false;
         }
 

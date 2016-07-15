@@ -11,7 +11,9 @@
 /src/Monolog/LogLevel.php
 /src/Monolog/LogLevelInterface.php
 
+# after wrapping log level
 /src/Monolog/ErrorHandler.php
 /src/Monolog/Handler/AbstractHandler.php
+/src/Monolog/Handler/BufferHandler.php
 
 

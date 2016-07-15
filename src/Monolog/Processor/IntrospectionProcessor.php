@@ -51,7 +51,7 @@ class IntrospectionProcessor
     public function __invoke(array $record)
     {
         // return if the level is not high enough
-        if ($record['level'] < $this->level) {
+        if ($record['level'] < $this->level->getLevel()) {
             return $record;
         }
 

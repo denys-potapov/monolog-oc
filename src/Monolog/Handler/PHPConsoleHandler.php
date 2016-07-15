@@ -175,7 +175,7 @@ class PHPConsoleHandler extends AbstractProcessingHandler
      */
     protected function write(array $record)
     {
-        if ($record['level'] < Logger::NOTICE) {
+        if ($record['level']->includes(Logger::NOTICE)) {
             $this->handleDebugRecord($record);
         } elseif (isset($record['context']['exception']) && $record['context']['exception'] instanceof Exception) {
             $this->handleExceptionRecord($record);
