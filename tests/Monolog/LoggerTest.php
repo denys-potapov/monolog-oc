@@ -95,7 +95,7 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
             ->method('handle');
         $logger->pushHandler($handler);
 
-        $this->assertTrue($logger->warning('test'));
+        $this->assertNull($logger->warning('test'));
     }
 
     /**
@@ -110,7 +110,7 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
             ->method('handle');
         $logger->pushHandler($handler);
 
-        $this->assertFalse($logger->warning('test'));
+        $this->assertNull($logger->warning('test'));
     }
 
     public function testHandlersInCtor()
@@ -421,7 +421,7 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
         ;
 
         $logger->pushHandler($handler1);
-        $this->assertFalse($logger->isHandling(Logger::DEBUG));
+        $this->assertFalse($logger->isHandling(['level' => Logger::DEBUG]));
 
         $handler2 = $this->getMock('Monolog\Handler\HandlerInterface');
         $handler2->expects($this->any())
@@ -430,7 +430,7 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
         ;
 
         $logger->pushHandler($handler2);
-        $this->assertTrue($logger->isHandling(Logger::DEBUG));
+        $this->assertTrue($logger->isHandling(['level' => Logger::DEBUG]));
     }
 
     /**
