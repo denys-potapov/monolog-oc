@@ -19,10 +19,8 @@ use Monolog\Collection\HandlerStack;
  *
  * @author Lenar Lõhmus <lenar@city.ee>
  */
-class GroupHandler extends Handler implements ProcessableHandlerInterface
+class GroupHandler extends GeneralHandler implements ProcessableHandlerInterface
 {
-    use ProcessableHandlerTrait;
-
     protected $handlers;
 
     /**
@@ -31,8 +29,8 @@ class GroupHandler extends Handler implements ProcessableHandlerInterface
      */
     public function __construct(array $handlers, $bubble = true)
     {
+        parent::__construct($bubble);
         $this->handlers = new HandlerStack($handlers);
-        $this->bubble = $bubble;
     }
 
     /**
@@ -46,15 +44,9 @@ class GroupHandler extends Handler implements ProcessableHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function handle(array $record): bool
+    public function postProcess(array $record)
     {
-        if ($this->processors) {
-            $record = $this->processRecord($record);
-        }
-
         $this->handlers->handle($record);
-
-        return false === $this->bubble;
     }
 
     /**
