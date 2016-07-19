@@ -41,6 +41,7 @@ abstract class GeneralHandler extends Handler
      */
     abstract public function isHandling(array $record): bool;
 
+    abstract public function postProcess(array $record);
     /**
      * Sets the bubbling behavior.
      *
@@ -95,7 +96,7 @@ abstract class GeneralHandler extends Handler
 
         $record = $this->processors->process($record);
 
-        $this->handler->handle($record);
+        $this->postProcess($record);
 
         return false === $this->bubble;
     }

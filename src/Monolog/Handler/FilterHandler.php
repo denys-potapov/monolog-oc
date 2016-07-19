@@ -81,6 +81,19 @@ class FilterHandler extends GeneralHandler
         return $this->levels->includes($record['level']);
     }
 
+    public function postProcess(array $record)
+    {
+        // The same logic as in FingersCrossedHandler
+        if (!$this->handler instanceof HandlerInterface) {
+            $this->handler = call_user_func($this->handler, $record, $this);
+            if (!$this->handler instanceof HandlerInterface) {
+                throw new \RuntimeException("The factory callable should return a HandlerInterface");
+            }
+        }
+
+        $this->handler->handle($record);
+    }
+
     /**
      * {@inheritdoc}
      */
