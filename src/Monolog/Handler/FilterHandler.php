@@ -22,9 +22,8 @@ use Monolog\LogLevels;
  * @author Hennadiy Verkh
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-class FilterHandler extends Handler implements ProcessableHandlerInterface
+class FilterHandler extends GeneralHandler
 {
-    use ProcessableHandlerTrait;
 
     /**
      * Handler or factory callable($record, $this)
@@ -41,13 +40,6 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface
     protected $levels;
 
     /**
-     * Whether the messages that are handled can bubble up the stack or not
-     *
-     * @var Boolean
-     */
-    protected $bubble;
-
-    /**
      * @param callable|HandlerInterface $handler        Handler or factory callable($record, $this).
      * @param int|array                 $minLevelOrList A list of levels to accept or a minimum level if maxLevel is provided
      * @param int                       $maxLevel       Maximum level to accept, only used if $minLevelOrList is not an array
@@ -55,8 +47,8 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface
      */
     public function __construct($handler, $minLevelOrList = Logger::DEBUG, $maxLevel = Logger::EMERGENCY, $bubble = true)
     {
+        parent::__construct($bubble);
         $this->handler  = $handler;
-        $this->bubble   = $bubble;
         $this->setAcceptedLevels($minLevelOrList, $maxLevel);
 
         if (!$this->handler instanceof HandlerInterface && !is_callable($this->handler)) {
@@ -87,32 +79,6 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface
     public function isHandling(array $record): bool
     {
         return $this->levels->includes($record['level']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handle(array $record): bool
-    {
-        if (!$this->isHandling($record)) {
-            return false;
-        }
-
-        // The same logic as in FingersCrossedHandler
-        if (!$this->handler instanceof HandlerInterface) {
-            $this->handler = call_user_func($this->handler, $record, $this);
-            if (!$this->handler instanceof HandlerInterface) {
-                throw new \RuntimeException("The factory callable should return a HandlerInterface");
-            }
-        }
-
-        if ($this->processors) {
-            $record = $this->processRecord($record);
-        }
-
-        $this->handler->handle($record);
-
-        return false === $this->bubble;
     }
 
     /**
