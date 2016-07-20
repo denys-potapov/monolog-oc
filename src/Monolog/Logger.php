@@ -24,6 +24,7 @@ namespace Monolog;
 
 use DateTimeZone;
 use Monolog\Handler\HandlerInterface;
+use Monolog\Processor\DateTimeProcessor;
 use Monolog\Collection\HandlerStack;
 use Monolog\Collection\ProcessorStack;
 use Psr\Log\LoggerInterface;
@@ -102,12 +103,7 @@ class Logger extends NewLogger implements LoggerInterface
     /**
      * @var bool
      */
-    protected $microsecondTimestamps = false;
-
-    /**
-     * @var DateTimeZone
-     */
-    protected $timezone;
+    protected $dateTimeProcessor;
 
     /**
      * @param string             $name       The logging channel
@@ -118,7 +114,9 @@ class Logger extends NewLogger implements LoggerInterface
     public function __construct(string $name, array $handlers = array(), array $processors = array(), DateTimeZone $timezone = null)
     {
         parent::__construct($name, $handlers, $processors);
-        $this->timezone = new DateTimeZone($timezone ?: date_default_timezone_get() ?: 'UTC');
+        // BC compatible date time
+        $this->dateTimeProcessor = new DateTimeProcessor($timezone);
+        $this->pushProcessor($this->dateTimeProcessor);
     }
 
     /**
@@ -213,7 +211,7 @@ class Logger extends NewLogger implements LoggerInterface
      */
     public function useMicrosecondTimestamps(bool $micro)
     {
-        $this->microsecondTimestamps = $micro;
+        $this->dateTimeProcessor->useMicrosecondTimestamps($micro);
     }
 
     /**
@@ -226,31 +224,7 @@ class Logger extends NewLogger implements LoggerInterface
      */
     public function addRecord($level, string $message, array $context = array()): bool
     {
-        // check if any handler will handle this message so we can return early and save cycles
-        if (null === $this->handlers->findHandlingKey(array('level' => $level))) {
-            return false;
-        }
-
-        if ($this->microsecondTimestamps) {
-            $ts = \DateTime::createFromFormat('U.u', sprintf('%.6F', microtime(true)), $this->timezone);
-        } else {
-            $ts = new \DateTime('', $this->timezone);
-        }
-        $ts->setTimezone($this->timezone);
-
-        $level = LogLevel::fromLevel($level);
-        $record = array(
-            'message' => $message,
-            'context' => $context,
-            'level' => $level,
-            'level_name' => (string) $level,
-            'channel' => $this->name,
-            'datetime' => $ts,
-            'extra' => array(),
-        );
-
-        $record = $this->processors->process($record);
-        $this->handlers->handle($record, false);
+        $this->addRecord2(LogLevel::fromLevel($level), $message, $context);
 
         return true;
     }
@@ -300,7 +274,7 @@ class Logger extends NewLogger implements LoggerInterface
      */
     public function setTimezone(DateTimeZone $tz)
     {
-        $this->timezone = $tz;
+        $this->dateTimeProcessor->setTimezone($tz);
     }
 
     /**
@@ -310,6 +284,6 @@ class Logger extends NewLogger implements LoggerInterface
      */
     public function getTimezone(): DateTimeZone
     {
-        return $this->timezone;
+        return $this->dateTimeProcessor->getTimezone();
     }
 }
