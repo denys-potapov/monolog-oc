@@ -1,3 +1,6 @@
+Readme is incomplete
+==============================
+
 Object Calisthenics in Monolog
 ==============================
 
